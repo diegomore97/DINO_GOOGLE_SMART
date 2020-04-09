@@ -13,9 +13,9 @@
 #define TPM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PllFllSelClk)
 #define FRECUENCIA_PWM 50U //para un periodo de 20 ms
 
-#define UMBRAL_LDR 2700  //Variar esta constante segun el brillo de tu pantalla
-#define POSICION_INICIAL_SERVO 10 //Angulo de 90 grados | variar estas contantes segun la altura o diseño de tu teclado
-#define POSICION_DESTINO_CLICK_SERVO 8 //Angulo de 70 grados | variar estas contantes segun la altura o diseño de tu teclado
+#define UMBRAL_LDR 1500  //Variar esta constante segun el brillo de tu pantalla
+#define POSICION_INICIAL_SERVO 8  //Angulo de 90 grados | variar estas contantes segun la altura o diseño de tu teclado
+#define POSICION_DESTINO_CLICK_SERVO 4 //Angulo de 70 grados | variar estas contantes segun la altura o diseño de tu teclado
 
 typedef enum
 {
