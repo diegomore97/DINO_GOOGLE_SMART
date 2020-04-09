@@ -29,12 +29,6 @@
 #include    "gsc_sch_core_cfg.h"
 #include    "gsc_sch_core_tick_isr.h"
 
-//INTEGRANTES DE EQUIPO:
-  //Vazquez Barba Christian
-  //Chavez Padilla Alejandro
-  //Moreno Arroyo Diego
-  //Ortega Gonzalez Misael
-
 /* Functions macros, constants, types and datas         */
 
 /*======================================================*/ 
