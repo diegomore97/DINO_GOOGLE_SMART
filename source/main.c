@@ -27,46 +27,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+ 
 /**
- * @file    Dinosaurio_Google.cpp
+ * @file    MKL25Z128xxx4_Project.c
  * @brief   Application entry point.
  */
 
 #include "board.h"
 #include "pin_mux.h"
 #include "fsl_pit.h"
-#include "sistemaPrincipal.h"
 
-void PIT_DriverIRQHandler(void);
+#include "gsc_sch_core.h"
+#include "gsc_sch_core_tick_isr.h"
+#include "core_cm0plus.h"
 
-void PIT_DriverIRQHandler(void)
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+volatile unsigned int sys_tick_counter = 0;
+
+/* TODO: insert other include files here. */
+
+/* TODO: insert other definitions and declarations here. */
+
+/*
+ * @brief   Application entry point.
+ */
+
+
+int main(void)
 {
-	flagPIT0 = PIT_GetStatusFlags(PIT, kPIT_Chnl_0);
-
-	if(flagPIT0)
-	{
-		PIT_ClearStatusFlags(PIT,0, kPIT_TimerFlag);
-	}
-
-
-}
-
-int main(void) {
-
-	/* Init board hardware. */
-	BOARD_InitBootPins();
-	BOARD_InitBootClocks();
-	/* Init FSL debug console. */
+	/* Board pin, clock, debug console init */
+	BOARD_InitPins();
+	BOARD_BootClockRUN();
 	BOARD_InitDebugConsole();
 
-	prepararSistema();
+	/* SysTick Configuration */
+	SysTick_Config(48000000U/1000U); //This only applies for ARM Cores with SysTick capability
 
-	while(1) {
+	/* Scheduler Initialization and tasks initialization  */
+	gsc_sch_core_Init();
 
-		controlPersonaje(&ldr1);
-
-	}
-
-	return 0 ;
+	/* Execute Scheduler */
+	gsc_sch_core_exec();
 }
+
+void SysTick_Handler(void)
+ {
+ 	sys_tick_counter++;
+ 	gsc_sch_core_tick_isr();
+ }
+
