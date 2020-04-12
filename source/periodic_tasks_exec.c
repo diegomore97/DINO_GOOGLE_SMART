@@ -41,7 +41,7 @@
  **************************************************************/
 void periodic_tasks_exec_5tks(void)
 {
-	controlPersonaje(&ldr1); //Sensor Objetos de Tierra
+	controlPersonaje(&ldr1, &ldr2); //Sensor Objetos de Tierra y sensor aereo
 }
 
 /**************************************************************
@@ -55,7 +55,7 @@ void periodic_tasks_exec_5tks(void)
  **************************************************************/
 void periodic_tasks_exec_10tks(void)
 {
-	//controlPersonaje(&ldr2); //Sensor objetos aereos
+
 }
 
 /**************************************************************

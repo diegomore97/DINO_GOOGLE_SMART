@@ -13,7 +13,6 @@
 #define TPM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PllFllSelClk)
 #define FRECUENCIA_PWM 50U //para un periodo de 20 ms
 
-#define UMBRAL_LDR 1500  //Variar esta constante segun el brillo de tu pantalla
 #define POSICION_INICIAL_SERVO 8  //Angulo de 90 grados | variar estas contantes segun la altura o diseño de tu teclado
 #define POSICION_DESTINO_CLICK_SERVO 4 //Angulo de 70 grados | variar estas contantes segun la altura o diseño de tu teclado
 
@@ -27,35 +26,35 @@ typedef enum
 typedef struct
 {
 	adv valorAdc;
-	dcv dutyCyclePwm;
-	Adcpwm curr_state;
 	adc configCanalAdc;
 	ADC_Type* base;
+	adv umbral;
 	ncadc numeroCanal;
 	ngadc numeroGrupo;
 }SensorPwm;
 
-volatile dcv updatedDutycycle = 0;
+
 char buffer[25]; //Variable para pruebas
-Adcpwm Next_state;
+Adcpwm curr_state = LEERADC;
+Adcpwm Next_state = LEERADC;
+dcv dutyCyclePwm;
 
 void configPwm(void);
 void outputPwm(dcv dutyCyclePwm);
 void configAdc(adc* configuracionCanal, ADC_Type* base, ncadc numeroCanal, ngadc numeroGrupo);
 adv readAdc(adc* configuracionCanal, ADC_Type* base, ngadc numeroCanalGrupo);
-void adctopwm(SensorPwm* s);
-void controlPersonaje(SensorPwm* s);
-void initSensorPwm(SensorPwm* s, ADC_Type* base, ncadc numeroCanal, ngadc numeroGrupo);
-boolean objetoDetectado(adv valorAdc);
+void adctopwm(SensorPwm* s1, SensorPwm* s2);
+void controlPersonaje(SensorPwm* s1, SensorPwm* s2);
+void initSensorPwm(SensorPwm* s, ADC_Type* base, ncadc numeroCanal, ngadc numeroGrupo, adv umbral);
+boolean objetoDetectado(SensorPwm* s);
 
-void initSensorPwm(SensorPwm* s, ADC_Type* base, ncadc numeroCanal, ngadc numeroGrupo)
+void initSensorPwm(SensorPwm* s, ADC_Type* base, ncadc numeroCanal, ngadc numeroGrupo, adv umbral)
 {
-	s->dutyCyclePwm = 0;
 	s->valorAdc = 0;
-	s->curr_state = LEERADC;
 	s->base = base;
 	s->numeroCanal = numeroCanal;
 	s->numeroGrupo = numeroGrupo;
+	s->umbral =umbral;
 	configAdc(&s->configCanalAdc, base, numeroCanal, numeroGrupo);
 }
 
@@ -129,11 +128,11 @@ void outputPwm(uint8_t dutyCyclePwm)
 
 }
 
-void adctoPWM(SensorPwm* s) //Calibrar a tu conveniencia
+void adctoPWM(SensorPwm* s1, SensorPwm* s2) //Calibrar a tu conveniencia
 {
 	dcv duty;
 
-	if(objetoDetectado(s->valorAdc))
+	if(objetoDetectado(s1) || objetoDetectado(s2))
 	{
 		duty = POSICION_DESTINO_CLICK_SERVO;
 		GPIO_WritePinOutput(PTE, 21 , 1);
@@ -145,41 +144,42 @@ void adctoPWM(SensorPwm* s) //Calibrar a tu conveniencia
 		GPIO_WritePinOutput(PTE , 21 , 0);
 	}
 
-	s->dutyCyclePwm = duty;
+	dutyCyclePwm = duty;
 
 }
 
-boolean objetoDetectado(adv valorAdc)
+boolean objetoDetectado(SensorPwm* s)
 {
-	if(valorAdc >= UMBRAL_LDR)
+	if(s->valorAdc >= s->umbral)
 		return 1;
 	else
 		return 0;
 
 }
 
-void controlPersonaje(SensorPwm* s)
+void controlPersonaje(SensorPwm* s1, SensorPwm* s2)
 {
 
-	switch(s->curr_state)
+	switch(curr_state)
 	{
 
 	case LEERADC:
-		s->valorAdc = readAdc(&s->configCanalAdc, s->base, s->numeroGrupo);
+		s1->valorAdc = readAdc(&s1->configCanalAdc, s1->base, s1->numeroGrupo);
+		s2->valorAdc = readAdc(&s2->configCanalAdc, s2->base, s2->numeroGrupo);
 		Next_state = CONVERTIR;
 		//sprintf(buffer,"Valor ADC: %d\n", s->valorAdc);
 		//PRINTF(buffer);
 		break;
 
 	case CONVERTIR:
-		adctoPWM(s);
+		adctoPWM(s1, s2);
 		Next_state = PWMOUTPUT;
 		break;
 
 	case PWMOUTPUT:
 		//sprintf(buffer,"Ciclo de Trabajo: %d\n", s->dutyCyclePwm);
 		//PRINTF(buffer);
-		outputPwm(s->dutyCyclePwm);
+		outputPwm(dutyCyclePwm);
 		Next_state = LEERADC;
 		break;
 
@@ -189,7 +189,7 @@ void controlPersonaje(SensorPwm* s)
 
 	}
 
-	s->curr_state = Next_state;
+	curr_state = Next_state;
 
 }
 

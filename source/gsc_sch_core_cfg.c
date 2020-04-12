@@ -38,7 +38,7 @@ const S_SCH_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
     {SCHM_NULL_PTR,                periodic_tasks_init_MclDrvs,      0,                     0,                         ALL_MODES},
     {SCHM_NULL_PTR,                periodic_tasks_init_SysDrvs,      0,                     0,                         ALL_MODES},
     {periodic_tasks_exec_5tks,     periodic_tasks_init_task_5tks,    5,                     5,                         ALL_MODES},
-    {periodic_tasks_exec_10tks,    periodic_tasks_init_task_10tks,   10,                  	10,                        ALL_MODES},
+	{periodic_tasks_exec_10tks,     periodic_tasks_init_task_10tks,  10,                    10,                        ALL_MODES},
     //{function_task_name,           task_initialization,              0,                     1,                         ALL_MODES},
 
     /* NOTE: this list shall be updated according to E_MODULES_ID_TYPE! */

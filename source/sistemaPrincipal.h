@@ -55,8 +55,8 @@ void prepararSistema(void)
 
 	configPwm();    //PWM
 
-	initSensorPwm(&ldr1, ADC0, 0U, 0U); //Canal de ADC que se sensara    | CONFIGURAR ADC0 GRUPO 0 CANAL 0 PTE20
-	initSensorPwm(&ldr2, ADC0, 3U, 0U); //Canal de ADC que se sensara    | CONFIGURAR ADC0 GRUPO 3 CANAL 0 PTE22
+	initSensorPwm(&ldr1, ADC0, 0U, 0U, 1500); //Canal de ADC que se sensara    | CONFIGURAR ADC0 GRUPO 0 CANAL 0 PTE20  | UMBRAL DE 1500
+	initSensorPwm(&ldr2, ADC0, 3U, 0U, 1000 ); //Canal de ADC que se sensara   | CONFIGURAR ADC0 GRUPO 3 CANAL 0 PTE22 | UMBRAL DE 1000
 
 	PRINTF("SISTEMA DINOSAURIO DE GOOGLE INICIADO\n\n");
 
