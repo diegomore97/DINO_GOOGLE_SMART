@@ -41,7 +41,7 @@
  **************************************************************/
 void periodic_tasks_exec_5tks(void)
 {
-	controlPersonaje(&ldr1, &ldr2); //Sensor Objetos de Tierra y sensor aereo
+	controlPersonaje(&ldr1, &ldr2); //LDR1 obstaculos de tierra | LDR2 obstaculos de mediana altura
 }
 
 /**************************************************************

@@ -16,14 +16,14 @@
 #define POSICION_INICIAL_SERVO 8  //Angulo de 90 grados | variar estas contantes segun la altura o diseño de tu teclado
 #define POSICION_DESTINO_CLICK_SERVO 4 //Angulo de 70 grados | variar estas contantes segun la altura o diseño de tu teclado
 
-typedef enum
+typedef enum  //Maquina de estados para el sistema
 {
 	LEERADC = 1,
 	CONVERTIR,
 	PWMOUTPUT
 }Adcpwm;
 
-typedef struct
+typedef struct //Tipo de dato para utilizar un sensor a traves del modulo ADC
 {
 	adv valorAdc;
 	adc configCanalAdc;
@@ -95,11 +95,11 @@ void configAdc(adc* configuracionCanal, ADC_Type* base, ncadc numeroCanal, ngadc
 #if defined(FSL_FEATURE_ADC16_HAS_CALIBRATION) && FSL_FEATURE_ADC16_HAS_CALIBRATION
 	if (kStatus_Success == ADC16_DoAutoCalibration(base))
 	{
-		PRINTF("ADC16_DoAutoCalibration() Done.\r\n");
+		//PRINTF("ADC16_DoAutoCalibration() Done.\r\n");
 	}
 	else
 	{
-		PRINTF("ADC16_DoAutoCalibration() Failed.\r\n");
+		//PRINTF("ADC16_DoAutoCalibration() Failed.\r\n");
 	}
 #endif /* FSL_FEATURE_ADC16_HAS_CALIBRATION */
 
@@ -128,29 +128,29 @@ void outputPwm(uint8_t dutyCyclePwm)
 
 }
 
-void adctoPWM(SensorPwm* s1, SensorPwm* s2) //Calibrar a tu conveniencia
+void adctoPWM(SensorPwm* s1, SensorPwm* s2)         //Calibrar a tu conveniencia en las constantes
 {
 	dcv duty;
 
-	if(objetoDetectado(s1) || objetoDetectado(s2))
+	if(objetoDetectado(s1) || objetoDetectado(s2)) //Si hay un obstaculo a cualquier altura, SALTAR!
 	{
-		duty = POSICION_DESTINO_CLICK_SERVO;
-		GPIO_WritePinOutput(PTE, 21 , 1);
+		duty = POSICION_DESTINO_CLICK_SERVO;       //Mover servomotor 45 grados
+		GPIO_WritePinOutput(PTE, 21 , 1);          //Encender un led
 	}
 
 	else
 	{
-		duty = POSICION_INICIAL_SERVO;
-		GPIO_WritePinOutput(PTE , 21 , 0);
+		duty = POSICION_INICIAL_SERVO;            //Mover servomotor a 0 grados
+		GPIO_WritePinOutput(PTE , 21 , 0);        //Apagar el foco
 	}
 
-	dutyCyclePwm = duty;
+	dutyCyclePwm = duty;                         //Ciclo de trabajo entre el 0 y el 10%
 
 }
 
 boolean objetoDetectado(SensorPwm* s)
 {
-	if(s->valorAdc >= s->umbral)
+	if(s->valorAdc >= s->umbral)                //Hay un obstaculo
 		return 1;
 	else
 		return 0;
@@ -164,22 +164,22 @@ void controlPersonaje(SensorPwm* s1, SensorPwm* s2)
 	{
 
 	case LEERADC:
-		s1->valorAdc = readAdc(&s1->configCanalAdc, s1->base, s1->numeroGrupo);
-		s2->valorAdc = readAdc(&s2->configCanalAdc, s2->base, s2->numeroGrupo);
+		s1->valorAdc = readAdc(&s1->configCanalAdc, s1->base, s1->numeroGrupo);   //Sensor Nivel Tierra
+		s2->valorAdc = readAdc(&s2->configCanalAdc, s2->base, s2->numeroGrupo);   //Sensor Nivel medio
 		Next_state = CONVERTIR;
 		//sprintf(buffer,"Valor ADC: %d\n", s->valorAdc);
 		//PRINTF(buffer);
 		break;
 
 	case CONVERTIR:
-		adctoPWM(s1, s2);
+		adctoPWM(s1, s2);                                                        //Verificar si hay obstaculos
 		Next_state = PWMOUTPUT;
 		break;
 
 	case PWMOUTPUT:
 		//sprintf(buffer,"Ciclo de Trabajo: %d\n", s->dutyCyclePwm);
 		//PRINTF(buffer);
-		outputPwm(dutyCyclePwm);
+		outputPwm(dutyCyclePwm);                                                //Mover el servomotor
 		Next_state = LEERADC;
 		break;
 
