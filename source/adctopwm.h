@@ -13,8 +13,8 @@
 #define TPM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PllFllSelClk)
 #define FRECUENCIA_PWM 50U //para un periodo de 20 ms
 
-#define POSICION_INICIAL_SERVO 8  //Angulo de 90 grados | variar estas contantes segun la altura o diseño de tu teclado
-#define POSICION_DESTINO_CLICK_SERVO 4 //Angulo de 70 grados | variar estas contantes segun la altura o diseño de tu teclado
+#define POSICION_INICIAL_SERVO 2  //Angulo de 0 grados | variar estas contantes segun la altura o diseño de tu teclado
+#define POSICION_DESTINO_CLICK_SERVO 4 //Angulo de 40 grados | variar estas contantes segun la altura o diseño de tu teclado
 
 typedef enum  //Maquina de estados para el sistema
 {
