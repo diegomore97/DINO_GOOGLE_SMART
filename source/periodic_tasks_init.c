@@ -50,7 +50,7 @@ void periodic_tasks_init_MclDrvs(void)
  **************************************************************/
 void periodic_tasks_init_SysDrvs(void)
 {
-	prepararSistema(); //Inicializar modulos y variables para el reproductor de musica
+
 }
 
 /**************************************************************

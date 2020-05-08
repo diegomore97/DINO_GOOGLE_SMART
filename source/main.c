@@ -44,6 +44,8 @@ int main(void)
 	/* SysTick Configuration */
 	SysTick_Config(48000000U/1000U); //This only applies for ARM Cores with SysTick capability
 
+	prepararSistema(); //Inicializar modulos y variables para el reproductor de musica
+
 	/* Scheduler Initialization and tasks initialization  */
 	gsc_sch_core_Init();
 
